@@ -25,3 +25,11 @@
   height: auto;
   box-sizing: border-box;
 }
+
+.info-item {
+  text-align: center;
+  &__title {
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+}
