@@ -1,3 +1,7 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 export const handleApiData = data => {
-  return data.map(item => console.log(item));
+  if (data.total === 0) {
+    Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+  }
 };

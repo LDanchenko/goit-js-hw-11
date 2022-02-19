@@ -15,10 +15,12 @@
   &__button {
     position: absolute;
     right: 0;
+
     border: none;
     padding: 7px;
     height: 32px;
     border-radius: 0px 5px 5px 0px;
+    border: 1.5px solid transparent;
   }
 
   &__input {
@@ -29,7 +31,12 @@
     border-radius: 5px;
     border: 1px solid transparent;
     &:focus {
-      border-color: rgb(30, 144, 255);
+      border: 1.5px solid rgb(30, 144, 255);
     }
+  }
+
+  &__input:focus + &__button {
+    border: 1.5px solid rgb(30, 144, 255);
+    border-left: 0;
   }
 }
