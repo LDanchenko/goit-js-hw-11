@@ -1,6 +1,4 @@
 .gallery {
-  //   display: flex;
-  //   flex-wrap: wrap;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 30px;
@@ -11,6 +9,8 @@
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.12), 0px 4px 4px rgba(0, 0, 0, 0.06),
     1px 4px 6px rgba(0, 0, 0, 0.16);
   border-radius: 0px 0px 5px 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .info {
@@ -18,7 +18,10 @@
   padding: 10px;
 }
 
-.test {
-  width: 100%;
-  max-height: 100%;
+.card-image {
+  flex-grow: 1;
+  max-width: 100%;
+  display: block;
+  height: auto;
+  box-sizing: border-box;
 }
