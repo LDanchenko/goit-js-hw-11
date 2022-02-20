@@ -1,9 +1,8 @@
 import config from './config';
 import axios from 'axios';
 const { API_KEY, API_URL } = config;
-export const fetchImages = query => {
-  console.log(query);
-  return axios.get(API_URL, {
+export const fetchImages = async query => {
+  const images = await axios.get(API_URL, {
     params: {
       key: API_KEY,
       q: query,
@@ -12,4 +11,5 @@ export const fetchImages = query => {
       safesearch: true,
     },
   });
+  return images;
 };

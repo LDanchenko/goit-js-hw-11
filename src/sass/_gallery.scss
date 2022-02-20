@@ -3,6 +3,7 @@
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 30px;
   padding: 25px;
+  margin-top: 50px;
 }
 
 .photo-card {
@@ -16,6 +17,8 @@
 .info {
   display: flex;
   padding: 10px;
+  margin-right: -10px;
+  justify-content: space-around;
 }
 
 .card-image {
@@ -28,8 +31,28 @@
 
 .info-item {
   text-align: center;
+  margin-right: 10px;
   &__title {
     margin-bottom: 10px;
     display: inline-block;
+  }
+}
+
+.button-more {
+  margin: 0 auto;
+  display: block;
+  background-color: rgb(51, 51, 153);
+  border: 1.5px solid transparent;
+  font-weight: 700;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  &:focus {
+    border: 1.5px solid rgb(30, 144, 255);
+  }
+  &.is-hidden {
+    display: none;
   }
 }
