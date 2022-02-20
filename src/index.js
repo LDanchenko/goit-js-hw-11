@@ -20,6 +20,7 @@ const searchImages = async query => {
 const searchQuery = new Pagination();
 
 form.addEventListener('submit', async event => {
+  gallery.innerHTML = '';
   event.preventDefault();
   loadButton.classList.add('is-hidden');
   const inputString = event.currentTarget.searchQuery.value.trim();
@@ -31,26 +32,24 @@ form.addEventListener('submit', async event => {
   searchQuery.resetPage();
   const images = await searchImages(searchQuery);
   const data = await handleApiData(images);
-  gallery.innerHTML = pictureCard(data);
-  toggleButton(data);
+  if (data) {
+    searchQuery.totalHits = images.totalHits;
+    gallery.innerHTML = pictureCard(data);
+    loadButton.classList.remove('is-hidden');
+  }
 });
 
 loadButton.addEventListener('click', async () => {
   loadButton.classList.add('is-hidden');
-
   searchQuery.nextPage();
   const images = await searchImages(searchQuery);
   const data = await handleApiData(images);
   const markup = pictureCard(data);
   console.log(markup);
   gallery.insertAdjacentHTML('beforeend', markup);
-  toggleButton(data);
-});
-
-const toggleButton = data => {
-  if (!data) {
+  loadButton.classList.remove('is-hidden');
+  if (searchQuery.totalHits <= searchQuery.page * 40) {
     loadButton.classList.add('is-hidden');
-  } else {
-    loadButton.classList.remove('is-hidden');
+    Notify.warning("We're sorry, but you've reached the end of search results.");
   }
-};
+});

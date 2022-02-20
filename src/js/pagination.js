@@ -2,6 +2,7 @@ export class Pagination {
   constructor() {
     this.query = '';
     this.page = 1;
+    this.totalHits = 0;
   }
 
   nextPage() {
