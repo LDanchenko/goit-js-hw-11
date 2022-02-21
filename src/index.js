@@ -1,59 +1,67 @@
 import './sass/main.scss';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { fetchImages } from './js/api/pixabayapi';
-import { handleApiData } from './js/handleData';
 import pictureCard from './js/components/pictureCard.hbs';
-import { Pagination } from './js/pagination';
+import { RestAPI } from './js/restapi';
 
+const PERPAGE = 40;
 const gallery = document.querySelector('.gallery');
 const form = document.querySelector('.search-form');
 const loadButton = document.querySelector('.button-more');
 
-const searchImages = async query => {
-  const response = await fetchImages(query);
-  const data = await response.data;
-  return data;
-};
+const searchQuery = new RestAPI(PERPAGE);
 
-const searchQuery = new Pagination();
-
-form.addEventListener('submit', async event => {
-  gallery.innerHTML = '';
+const handleSubmitButton = async event => {
   event.preventDefault();
+  createMarkup(gallery, '');
   loadButton.classList.add('is-hidden');
-  const inputString = event.currentTarget.searchQuery.value.trim();
-  if (!inputString) {
+
+  const query = event.currentTarget.searchQuery.value.trim();
+  if (!query) {
     Notify.warning('Please enter valid image name');
     return;
   }
-  searchQuery.query = inputString;
+  searchQuery.setQuery(query);
   searchQuery.resetPage();
-  try {
-    const images = await searchImages(searchQuery);
 
-    return images;
-  } catch (error) {
-    Notify.error('Oops, an error occured');
-  }
-  const data = await handleApiData(images);
+  const data = await getApiData();
+
   if (data) {
-    searchQuery.totalHits = images.totalHits;
-    gallery.innerHTML = pictureCard(data);
+    searchQuery.totalHits = data.totalHits;
+    createMarkup(gallery, pictureCard(data.hits));
     loadButton.classList.remove('is-hidden');
   }
-});
+};
 
-loadButton.addEventListener('click', async () => {
+const handleMoreButton = async () => {
   loadButton.classList.add('is-hidden');
   searchQuery.nextPage();
-  const images = await searchImages(searchQuery);
-  const data = await handleApiData(images);
-  const markup = pictureCard(data);
-  console.log(markup);
-  gallery.insertAdjacentHTML('beforeend', markup);
-  loadButton.classList.remove('is-hidden');
-  if (searchQuery.totalHits <= searchQuery.page * 40) {
+  const data = await getApiData();
+  gallery.insertAdjacentHTML('beforeend', pictureCard(data.hits));
+
+  if (searchQuery.totalHits <= searchQuery.page * searchQuery.perpage) {
     loadButton.classList.add('is-hidden');
     Notify.warning("We're sorry, but you've reached the end of search results.");
+  } else {
+    loadButton.classList.remove('is-hidden');
   }
-});
+};
+
+const createMarkup = (elem, markup) => {
+  elem.innerHTML = markup;
+};
+
+const getApiData = async () => {
+  try {
+    const data = await searchQuery.searchImages();
+    if (data.total === 0) {
+      Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+      return;
+    }
+    return { totalHits: data.totalHits, hits: data.hits };
+  } catch (error) {
+    Notify.failure('Oops, an error occurred');
+  }
+};
+
+form.addEventListener('submit', handleSubmitButton);
+loadButton.addEventListener('click', handleMoreButton);

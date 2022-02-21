@@ -20,26 +20,26 @@
     right: 0;
     cursor: pointer;
     border: none;
-    padding: 7px;
-    height: 32px;
+    padding: 5px;
+    height: 30px;
     border-radius: 0px 5px 5px 0px;
-    border: 1.5px solid transparent;
+    border: 2px solid transparent;
   }
 
   &__input {
     outline: none;
     padding: 5px 10px 5px 10px;
     width: 350px;
-    height: 32px;
     border-radius: 5px;
     border: 1px solid transparent;
+    height: 30px;
     &:focus {
-      border: 1.5px solid rgb(30, 144, 255);
+      border: 2px solid rgb(30, 144, 255);
     }
   }
 
   &__input:focus + &__button {
-    border: 1.5px solid rgb(30, 144, 255);
+    border: 2px solid rgb(30, 144, 255);
     border-left: 0;
   }
 }
