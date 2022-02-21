@@ -27,6 +27,7 @@ const handleSubmitButton = async event => {
 
   if (data) {
     searchQuery.totalHits = data.totalHits;
+    Notify.info(`Hooray! We found ${searchQuery.totalHits} images`);
     createMarkup(gallery, pictureCard(data.hits));
     loadButton.classList.remove('is-hidden');
   }
