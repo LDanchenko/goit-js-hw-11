@@ -1,5 +1,7 @@
-import './sass/main.scss';
+import SimpleLightbox from 'simplelightbox';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import './sass/main.scss';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import pictureCard from './js/components/pictureCard.hbs';
 import { RestAPI } from './js/restapi';
 
@@ -13,6 +15,7 @@ const searchQuery = new RestAPI(PERPAGE);
 const handleSubmitButton = async event => {
   event.preventDefault();
   createMarkup(gallery, '');
+
   loadButton.classList.add('is-hidden');
 
   const query = event.currentTarget.searchQuery.value.trim();
@@ -27,9 +30,11 @@ const handleSubmitButton = async event => {
 
   if (data) {
     searchQuery.totalHits = data.totalHits;
+
     Notify.info(`Hooray! We found ${searchQuery.totalHits} images`);
     createMarkup(gallery, pictureCard(data.hits));
     loadButton.classList.remove('is-hidden');
+    let lightboxInstance = new SimpleLightbox('.gallery a'); // где-то удалять и обновлять
   }
 };
 
@@ -63,6 +68,10 @@ const getApiData = async () => {
     Notify.failure('Oops, an error occurred');
   }
 };
+
+gallery.addEventListener('click', event => {
+  event.preventDefault();
+});
 
 form.addEventListener('submit', handleSubmitButton);
 loadButton.addEventListener('click', handleMoreButton);
