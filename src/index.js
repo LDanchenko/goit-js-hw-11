@@ -10,13 +10,11 @@ const form = document.querySelector('.search-form');
 const loadButton = document.querySelector('.button-more');
 
 const searchImages = async query => {
-  try {
-    const response = await fetchImages(query);
-    return response.data;
-  } catch (error) {
-    console.log(error.message);
-  }
+  const response = await fetchImages(query);
+  const data = await response.data;
+  return data;
 };
+
 const searchQuery = new Pagination();
 
 form.addEventListener('submit', async event => {
@@ -30,7 +28,13 @@ form.addEventListener('submit', async event => {
   }
   searchQuery.query = inputString;
   searchQuery.resetPage();
-  const images = await searchImages(searchQuery);
+  try {
+    const images = await searchImages(searchQuery);
+
+    return images;
+  } catch (error) {
+    Notify.error('Oops, an error occured');
+  }
   const data = await handleApiData(images);
   if (data) {
     searchQuery.totalHits = images.totalHits;
