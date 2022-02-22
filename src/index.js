@@ -11,13 +11,11 @@ const form = document.querySelector('.search-form');
 const loadButton = document.querySelector('.button-more');
 
 const searchQuery = new RestAPI(PERPAGE);
+let lightboxInstance = new SimpleLightbox('.gallery a'); // где-то удалять и обновлять
 
-const handleSubmitButton = async event => {
+const handleSubmitButtonClick = async event => {
   event.preventDefault();
-  createMarkup(gallery, '');
-
-  loadButton.classList.add('is-hidden');
-
+  clearGallery();
   const query = event.currentTarget.searchQuery.value.trim();
   if (!query) {
     Notify.warning('Please enter valid image name');
@@ -32,17 +30,19 @@ const handleSubmitButton = async event => {
     searchQuery.totalHits = data.totalHits;
 
     Notify.info(`Hooray! We found ${searchQuery.totalHits} images`);
-    createMarkup(gallery, pictureCard(data.hits));
+    gallery.innerHTML = pictureCard(data.hits);
     loadButton.classList.remove('is-hidden');
-    let lightboxInstance = new SimpleLightbox('.gallery a'); // где-то удалять и обновлять
+    gallery.addEventListener('click', handleCardClick);
+    lightboxInstance.refresh();
   }
 };
 
-const handleMoreButton = async () => {
+const handleMoreButtonClick = async () => {
   loadButton.classList.add('is-hidden');
   searchQuery.nextPage();
   const data = await getApiData();
   gallery.insertAdjacentHTML('beforeend', pictureCard(data.hits));
+  lightboxInstance.refresh();
 
   if (searchQuery.totalHits <= searchQuery.page * searchQuery.perpage) {
     loadButton.classList.add('is-hidden');
@@ -50,10 +50,6 @@ const handleMoreButton = async () => {
   } else {
     loadButton.classList.remove('is-hidden');
   }
-};
-
-const createMarkup = (elem, markup) => {
-  elem.innerHTML = markup;
 };
 
 const getApiData = async () => {
@@ -69,9 +65,19 @@ const getApiData = async () => {
   }
 };
 
-gallery.addEventListener('click', event => {
-  event.preventDefault();
-});
+const clearGallery = () => {
+  gallery.innerHTML = '';
+  loadButton.classList.add('is-hidden');
+  gallery.removeEventListener('click', handleCardClick);
+};
 
-form.addEventListener('submit', handleSubmitButton);
-loadButton.addEventListener('click', handleMoreButton);
+const handleCardClick = event => {
+  event.preventDefault();
+  if (event.target.nodeName !== 'IMG') {
+    return;
+  }
+  lightboxInstance.open('.gallery a');
+};
+
+form.addEventListener('submit', handleSubmitButtonClick);
+loadButton.addEventListener('click', handleMoreButtonClick);

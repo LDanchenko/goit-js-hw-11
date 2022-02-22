@@ -22,11 +22,14 @@
 }
 
 .card-image {
-  flex-grow: 1;
   max-width: 100%;
   display: block;
-  height: auto;
+  height: 100%;
   box-sizing: border-box;
+}
+
+.card-link {
+  flex-grow: 1;
 }
 
 .info-item {
