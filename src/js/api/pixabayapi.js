@@ -13,5 +13,6 @@ export const fetchImages = async request => {
       per_page: request.perpage,
     },
   });
+
   return images;
 };

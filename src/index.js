@@ -38,18 +38,20 @@ const handleSubmitButtonClick = async event => {
 };
 
 const handleMoreButtonClick = async () => {
+  const topButtonPosition = loadButton.getBoundingClientRect().top;
+
   loadButton.classList.add('is-hidden');
   searchQuery.nextPage();
   const data = await getApiData();
   gallery.insertAdjacentHTML('beforeend', pictureCard(data.hits));
   lightboxInstance.refresh();
-
   if (searchQuery.totalHits <= searchQuery.page * searchQuery.perpage) {
     loadButton.classList.add('is-hidden');
     Notify.warning("We're sorry, but you've reached the end of search results.");
   } else {
     loadButton.classList.remove('is-hidden');
   }
+  scrollPage(topButtonPosition);
 };
 
 const getApiData = async () => {
@@ -77,6 +79,13 @@ const handleCardClick = event => {
     return;
   }
   lightboxInstance.open('.gallery a');
+};
+
+const scrollPage = (top = 0) => {
+  window.scrollBy({
+    top,
+    behavior: 'smooth',
+  });
 };
 
 form.addEventListener('submit', handleSubmitButtonClick);
