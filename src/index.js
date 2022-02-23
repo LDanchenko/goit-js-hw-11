@@ -7,6 +7,7 @@ import pictureCard from './js/components/pictureCard.hbs';
 import { RestAPI } from './js/restapi';
 
 const PERPAGE = 40;
+const DEBOUNCE_DELAY = 170;
 const gallery = document.querySelector('.gallery');
 const form = document.querySelector('.search-form');
 const loadSpinner = document.querySelector('.load-more');
@@ -34,7 +35,7 @@ const onSearch = async event => {
     loadSpinner.classList.remove('is-hidden');
     gallery.addEventListener('click', handleCardClick);
     lightboxInstance.refresh();
-    window.addEventListener('scroll', debounce(handleScroll, 170));
+    window.addEventListener('scroll', debounce(handleScroll, DEBOUNCE_DELAY));
   }
 };
 
