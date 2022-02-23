@@ -22,7 +22,7 @@
 }
 
 .card-image {
-  max-width: 100%;
+  width: 100%;
   display: block;
   height: 100%;
   box-sizing: border-box;
@@ -30,6 +30,7 @@
 
 .card-link {
   flex-grow: 1;
+  height: 340px;
 }
 
 .info-item {

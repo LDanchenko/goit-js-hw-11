@@ -11,7 +11,7 @@ const form = document.querySelector('.search-form');
 const loadButton = document.querySelector('.button-more');
 
 const searchQuery = new RestAPI(PERPAGE);
-let lightboxInstance = new SimpleLightbox('.gallery a'); // где-то удалять и обновлять
+let lightboxInstance = new SimpleLightbox('.gallery a');
 
 const handleSubmitButtonClick = async event => {
   event.preventDefault();
@@ -28,16 +28,16 @@ const handleSubmitButtonClick = async event => {
 
   if (data) {
     searchQuery.totalHits = data.totalHits;
-
     Notify.info(`Hooray! We found ${searchQuery.totalHits} images`);
     gallery.innerHTML = pictureCard(data.hits);
     loadButton.classList.remove('is-hidden');
     gallery.addEventListener('click', handleCardClick);
     lightboxInstance.refresh();
+    window.addEventListener('scroll', handleScroll);
   }
 };
 
-const handleMoreButtonClick = async () => {
+const handleLoadMore = async () => {
   const topButtonPosition = loadButton.getBoundingClientRect().top;
 
   loadButton.classList.add('is-hidden');
@@ -71,6 +71,7 @@ const clearGallery = () => {
   gallery.innerHTML = '';
   loadButton.classList.add('is-hidden');
   gallery.removeEventListener('click', handleCardClick);
+  window.removeEventListener('scroll', handleScroll);
 };
 
 const handleCardClick = event => {
@@ -88,5 +89,11 @@ const scrollPage = (top = 0) => {
   });
 };
 
+function handleScroll() {
+  const buttonPositionTop = loadButton.getBoundingClientRect().top;
+  if (buttonPositionTop > 0 && buttonPositionTop <= window.innerHeight) {
+    handleLoadMore();
+  }
+}
+
 form.addEventListener('submit', handleSubmitButtonClick);
-loadButton.addEventListener('click', handleMoreButtonClick);
