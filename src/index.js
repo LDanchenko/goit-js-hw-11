@@ -1,5 +1,6 @@
 import SimpleLightbox from 'simplelightbox';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import debounce from 'lodash.debounce';
 import './sass/main.scss';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import pictureCard from './js/components/pictureCard.hbs';
@@ -8,12 +9,12 @@ import { RestAPI } from './js/restapi';
 const PERPAGE = 40;
 const gallery = document.querySelector('.gallery');
 const form = document.querySelector('.search-form');
-const loadButton = document.querySelector('.button-more');
+const loadSpinner = document.querySelector('.load-more');
 
 const searchQuery = new RestAPI(PERPAGE);
 let lightboxInstance = new SimpleLightbox('.gallery a');
 
-const handleSubmitButtonClick = async event => {
+const onSearch = async event => {
   event.preventDefault();
   clearGallery();
   const query = event.currentTarget.searchQuery.value.trim();
@@ -30,26 +31,26 @@ const handleSubmitButtonClick = async event => {
     searchQuery.totalHits = data.totalHits;
     Notify.info(`Hooray! We found ${searchQuery.totalHits} images`);
     gallery.innerHTML = pictureCard(data.hits);
-    loadButton.classList.remove('is-hidden');
+    loadSpinner.classList.remove('is-hidden');
     gallery.addEventListener('click', handleCardClick);
     lightboxInstance.refresh();
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', debounce(handleScroll, 170));
   }
 };
 
-const handleLoadMore = async () => {
-  const topButtonPosition = loadButton.getBoundingClientRect().top;
+const onLoadMore = async () => {
+  const topButtonPosition = loadSpinner.getBoundingClientRect().top;
 
-  loadButton.classList.add('is-hidden');
+  loadSpinner.classList.add('is-hidden');
   searchQuery.nextPage();
   const data = await getApiData();
   gallery.insertAdjacentHTML('beforeend', pictureCard(data.hits));
   lightboxInstance.refresh();
   if (searchQuery.totalHits <= searchQuery.page * searchQuery.perpage) {
-    loadButton.classList.add('is-hidden');
+    loadSpinner.classList.add('is-hidden');
     Notify.warning("We're sorry, but you've reached the end of search results.");
   } else {
-    loadButton.classList.remove('is-hidden');
+    loadSpinner.classList.remove('is-hidden');
   }
   scrollPage(topButtonPosition);
 };
@@ -69,7 +70,7 @@ const getApiData = async () => {
 
 const clearGallery = () => {
   gallery.innerHTML = '';
-  loadButton.classList.add('is-hidden');
+  loadSpinner.classList.add('is-hidden');
   gallery.removeEventListener('click', handleCardClick);
   window.removeEventListener('scroll', handleScroll);
 };
@@ -90,10 +91,10 @@ const scrollPage = (top = 0) => {
 };
 
 function handleScroll() {
-  const buttonPositionTop = loadButton.getBoundingClientRect().top;
+  const buttonPositionTop = loadSpinner.getBoundingClientRect().top;
   if (buttonPositionTop > 0 && buttonPositionTop <= window.innerHeight) {
-    handleLoadMore();
+    onLoadMore();
   }
 }
 
-form.addEventListener('submit', handleSubmitButtonClick);
+form.addEventListener('submit', onSearch);
